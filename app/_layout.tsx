@@ -1,6 +1,11 @@
 import { Stack } from "expo-router";
+import { QuestsProvider } from "../context/quests";
 import "../global.css";
 
 export default function RootLayout() {
-  return <Stack screenOptions={{ headerShown: false }} />
+  return (
+    <QuestsProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </QuestsProvider>
+  );
 }

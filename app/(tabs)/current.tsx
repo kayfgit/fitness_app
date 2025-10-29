@@ -1,21 +1,21 @@
 import React from "react";
-import { View } from "react-native";
-import QuestInfo, { QuestGoal } from "../../components/quest-info";
+import { Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import QuestInfo from "../../components/quest-info";
+import { useQuests } from "../../context/quests";
 
 export default function CurrentScreen() {
-  const questGoals: QuestGoal[] = [
-    { exercise: "PUSH-UPS", current: 0, target: 100 },
-    { exercise: "SIT-UPS", current: 0, target: 100 },
-    { exercise: "SQUATS", current: 0, target: 100 },
-    { exercise: "RUN", current: 0, target: 10, unit: "KM" },
-  ];
+  const { activeQuest } = useQuests();
 
   return (
-    <View className="flex-1 bg-slate-900 items-center justify-center p-4">
-      <QuestInfo
-        title={"DAILY QUEST - TRAIN TO BECOME\nA FORMIDABLE COMBATANT"}
-        goals={questGoals}
-      />
-    </View>
+    <SafeAreaView className="flex-1 bg-slate-900">
+      <View className="flex-1 items-center justify-center p-4">
+        {activeQuest ? (
+          <QuestInfo title={activeQuest.title} goals={activeQuest.goals} />
+        ) : (
+          <Text className="text-slate-300">No active quest selected.</Text>
+        )}
+      </View>
+    </SafeAreaView>
   );
 }
