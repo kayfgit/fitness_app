@@ -1,51 +1,66 @@
+import { Clock, Info, X } from "lucide-react-native";
 import React from "react";
-import { Text, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
-const QuestInfo = () => {
+export type QuestGoal = {
+  exercise: string;
+  current: number;
+  target: number;
+  unit?: string;
+};
+
+type QuestInfoProps = {
+  title: string;
+  goals: QuestGoal[];
+  onClose?: () => void;
+};
+
+const QuestInfo: React.FC<QuestInfoProps> = ({ title, goals, onClose }) => {
   return (
-    <View className="flex-1 items-center justify-center bg-gradient-to-b from-[#2a3b47] to-[#e3e3e3]">
-      <View className="w-80 bg-[#0c1624] rounded-lg border border-[#2e3d4d] p-4 shadow-lg">
-        {/* Title */}
-        <Text className="text-white text-lg font-bold text-center mb-4 tracking-widest">
-          QUEST INFO
-        </Text>
-
-        {/* Subtitle */}
-        <Text className="text-center text-white text-sm mb-6">
-          DAILY QUEST - TRAIN TO BECOME{"\n"}A FORMIDABLE COMBATANT
-        </Text>
-
-        {/* Goals Header */}
-        <Text className="text-green-500 font-bold text-center mb-3">GOALS</Text>
-
-        {/* Goals List */}
-        <View className="space-y-2 mb-6">
-          <Text className="text-white">
-            - PUSH-UPS <Text className="text-gray-300">[0/100]</Text>
-          </Text>
-          <Text className="text-white">
-            - SIT-UPS <Text className="text-gray-300">[0/100]</Text>
-          </Text>
-          <Text className="text-white">
-            - SQUATS <Text className="text-gray-300">[0/100]</Text>
-          </Text>
-          <Text className="text-white">
-            - RUN <Text className="text-gray-300">[0/10KM]</Text>
-          </Text>
+    <View className="w-full max-w-md bg-slate-800/90 rounded-3xl shadow-lg border border-cyan-500/20">
+      <View className="flex-row justify-between items-center p-4 border-b border-cyan-500/20">
+        <View className="flex-row items-center gap-2">
+          <Info size={24} color="#06b6d4" />
+          <Text className="text-white text-xl font-bold">QUEST INFO</Text>
         </View>
-
-        {/* Caution Section */}
-        <Text className="text-red-500 font-bold text-center">CAUTION!</Text>
-        <Text className="text-white text-center text-xs mb-6">
-          - IF THE DAILY QUEST{"\n"}REMAINS INCOMPLETE, PENALTIES{"\n"}WILL BE
-          GIVEN ACCORDINGLY.
-        </Text>
-
-        {/* Clock Icon Placeholder */}
-        <View className="items-center">
-          <Text className="text-white text-3xl">🕒</Text>
-        </View>
+        <TouchableOpacity onPress={onClose}>
+          <X size={24} color="#06b6d4" />
+        </TouchableOpacity>
       </View>
+
+      <ScrollView className="p-4">
+        <Text className="text-white text-2xl text-center mb-6">{title}</Text>
+
+        <View className="mb-6">
+          <Text className="text-green-400 text-xl mb-4">GOALS</Text>
+          {goals.map((goal, index) => (
+            <View key={index} className="flex-row justify-between mb-3">
+              <Text className="text-white text-lg">-{goal.exercise}</Text>
+              <Text className="text-white text-lg">
+                [{goal.current}/{goal.target}
+                {goal.unit || ""}]
+              </Text>
+            </View>
+          ))}
+        </View>
+
+        <View className="mb-6">
+          <Text className="text-red-500 text-lg mb-2">CAUTION!</Text>
+          <Text className="text-white text-lg text-center">
+            - IF THE DAILY QUEST{"\n"}REMAINS INCOMPLETE, PENALTIES{"\n"}
+            WILL BE GIVEN ACCORDINGLY.
+          </Text>
+        </View>
+
+        <View className="items-center mt-4">
+          <Clock size={40} color="#06b6d4" />
+        </View>
+      </ScrollView>
+
+      <View className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-cyan-500/50 rounded-tl-xl" />
+      <View className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-cyan-500/50 rounded-tr-xl" />
+      <View className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-cyan-500/50 rounded-bl-xl" />
+      <View className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-cyan-500/50 rounded-br-xl" />
     </View>
   );
 };
