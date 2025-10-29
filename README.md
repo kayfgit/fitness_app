@@ -33,3 +33,5 @@ END GOAL:
 - Maybe have a way to connect to the GymRats app, maybe allow you to share the quest that you completed along with the confirmation that you actually did it (exercises done etc..).
 
 - Periodically send notifications to your phone reminding you of the quest, and the consequences if not completed (It should have a robotic tone to it).
+
+- When you start up the app for the first time, have a window saying something like "You have acquired the courage to change, will you become a Player?". If you accept then the app opens, if not the app closes and uninstalls itself 😂
