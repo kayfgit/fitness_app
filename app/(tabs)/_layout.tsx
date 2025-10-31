@@ -17,9 +17,9 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="questhub"
+        name="quests"
         options={{
-          title: "QuestHub",
+          title: "Quests",
           tabBarIcon: ({ color, size }) => (
             <View>
               <ListTodo color={color} size={size} />

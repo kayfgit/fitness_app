@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import QuestInfo from "../../components/quest-info";
 import { useQuests } from "../../context/quests";
 
+
 export default function CurrentScreen() {
   const { activeQuest } = useQuests();
 

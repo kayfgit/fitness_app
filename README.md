@@ -1,6 +1,10 @@
 FITNESS OF THE WEAK APP
 
-It's an app based on the Solo Leveling system, with nothing of that overwhelming "Defeat the boss with pushups!" or "Get to 50 winstreak to receive a reward!" stuff that the other similar apps have. It should be more personal to you instead of feeling mass produced and bloated. It should also have penalties that you actually don't want to receive instead of just being "Oh no, oops, missed a day 🤓". Remember, the only thing that is truly yours in this world is your body, so make sure to take care of it.
+It's an app based on the Solo Leveling system, with nothing of that "Defeat the boss with pushups!" or "Get to 50 winstreak to receive a reward!" stuff that the other similar apps have. It should be more personal to you instead of feeling mass produced and bloated. It should also have penalties that you actually don't want to receive instead of just being "Oh no, oops, missed a day 🤓".
+
+
+Remember, the only thing that is truly yours in this world is your body, so make sure to take care of it.
+
 
 CURRENT TODOS:
 
@@ -28,9 +32,9 @@ END GOAL:
 
 - Have some way of checking that the exercises are actually being done instead of being cheated.
 
-- Have actually significant penalties, like blocking tiktok and twitter for a week (dont know if thats possible).
+- Have actually significant penalties that the player can select in the settings, like blocking tiktok and twitter for a week (Don't know if thats possible).
 
-- Maybe have a way to connect to the GymRats app, maybe allow you to share the quest that you completed along with the confirmation that you actually did it (exercises done etc..).
+- Maybe have a way to connect to the GymRats app and allow you to share the quest that you completed along with the confirmation that you actually did it (Exercises done etc..).
 
 - Periodically send notifications to your phone reminding you of the quest, and the consequences if not completed (It should have a robotic tone to it).
 
