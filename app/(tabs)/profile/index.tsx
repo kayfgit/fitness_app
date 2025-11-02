@@ -43,28 +43,28 @@ export default function ProfileScreen() {
         </View>
 
         <Row
-          label="account"
+          label="Account"
           onPress={() =>
             router.push({ pathname: "/(tabs)/profile/stats" } as any)
           }
           icon={<User2 size={20} color="#22d3ee" />}
         />
         <Row
-          label="stats"
+          label="Stats"
           onPress={() =>
             router.push({ pathname: "/(tabs)/profile/stats" } as any)
           }
           icon={<User2 size={20} color="#22d3ee" />}
         />
         <Row
-          label="settings"
+          label="Settings"
           onPress={() =>
             router.push({ pathname: "/(tabs)/profile/settings" } as any)
           }
           icon={<Settings size={20} color="#22d3ee" />}
         />
         <Row
-          label="links"
+          label="Links"
           onPress={() =>
             router.push({ pathname: "/(tabs)/profile/links" } as any)
           }

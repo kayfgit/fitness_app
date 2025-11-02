@@ -31,6 +31,11 @@ type QuestsState = {
   deleteQuest: (id: string) => void;
   setActiveQuestId: (id: string | null) => void;
   createQuest: (title?: string) => Quest;
+  updateGoalProgress: (
+    questId: string,
+    goalId: string,
+    newProgress: number
+  ) => void;
 };
 
 const STORAGE_KEY = "quests_state_v1";
@@ -165,6 +170,27 @@ export const QuestsProvider: React.FC<React.PropsWithChildren> = ({
     [addQuest]
   );
 
+  const updateGoalProgress = useCallback(
+    (questId: string, goalId: string, newProgress: number) => {
+      setQuests((prev) => {
+        const next = prev.map((quest) => {
+          if (quest.id === questId) {
+            return {
+              ...quest,
+              goals: quest.goals.map((goal) =>
+                goal.id === goalId ? { ...goal, current: newProgress } : goal
+              ),
+            };
+          }
+          return quest;
+        });
+        void persist(next, activeQuestId);
+        return next;
+      });
+    },
+    [activeQuestId, persist]
+  );
+
   const activeQuest = useMemo(
     () => quests.find((q) => q.id === activeQuestId) || null,
     [quests, activeQuestId]
@@ -180,6 +206,7 @@ export const QuestsProvider: React.FC<React.PropsWithChildren> = ({
       deleteQuest,
       setActiveQuestId: setActive,
       createQuest,
+      updateGoalProgress,
     }),
     [
       quests,
@@ -190,6 +217,7 @@ export const QuestsProvider: React.FC<React.PropsWithChildren> = ({
       deleteQuest,
       setActive,
       createQuest,
+      updateGoalProgress,
     ]
   );
 

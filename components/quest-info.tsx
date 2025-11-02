@@ -1,9 +1,10 @@
 import { Clock, Info, X } from "lucide-react-native";
-import React from "react";
+import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export type QuestGoal = {
   exercise: string;
+  id?: string;
   current: number;
   target: number;
   unit?: string;
@@ -13,9 +14,16 @@ type QuestInfoProps = {
   title: string;
   goals: QuestGoal[];
   onClose?: () => void;
+  onGoalPress?: (goal: QuestGoal, index: number) => void;
 };
 
-const QuestInfo: React.FC<QuestInfoProps> = ({ title, goals, onClose }) => {
+const QuestInfo: React.FC<QuestInfoProps> = ({
+  title,
+  goals,
+  onClose,
+  onGoalPress,
+}) => {
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   return (
     <View className="w-full max-w-md bg-slate-800/90 rounded-3xl shadow-lg border border-cyan-500/20">
       <View className="flex-row justify-between items-center p-4 border-b border-cyan-500/20">
@@ -34,13 +42,40 @@ const QuestInfo: React.FC<QuestInfoProps> = ({ title, goals, onClose }) => {
         <View className="mb-6">
           <Text className="text-green-400 text-xl mb-4">GOALS</Text>
           {goals.map((goal, index) => (
-            <View key={index} className="flex-row justify-between mb-3">
-              <Text className="text-white text-lg">-{goal.exercise}</Text>
-              <Text className="text-white text-lg">
-                [{goal.current}/{goal.target}
-                {goal.unit || ""}]
-              </Text>
-            </View>
+            <TouchableOpacity
+              key={goal.id || index}
+              onPress={() => {
+                setSelectedIndex(index);
+                onGoalPress?.(goal, index);
+              }}
+              className={`mb-3 p-2 rounded-lg ${selectedIndex === index ? "bg-cyan-500/20" : ""}`}
+              activeOpacity={0.7}
+            >
+              <View className="flex-row justify-between items-center">
+                <Text
+                  className={`text-lg ${selectedIndex === index ? "text-cyan-300" : "text-white"} ${selectedIndex === index ? "font-bold" : ""}`}
+                >
+                  -{goal.exercise}
+                </Text>
+                <Text
+                  className={`text-lg ${selectedIndex === index ? "text-cyan-300" : "text-white"} ${selectedIndex === index ? "font-bold" : ""}`}
+                >
+                  [{goal.current}/{goal.target}
+                  {goal.unit || ""}]
+                </Text>
+              </View>
+              {selectedIndex === index && (
+                <View
+                  className="absolute inset-0 border border-cyan-400 rounded-lg"
+                  style={{
+                    shadowColor: "#06b6d4",
+                    shadowOffset: { width: 0, height: 0 },
+                    shadowOpacity: 0.5,
+                    shadowRadius: 8,
+                  }}
+                />
+              )}
+            </TouchableOpacity>
           ))}
         </View>
 
