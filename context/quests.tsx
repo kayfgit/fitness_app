@@ -56,45 +56,49 @@ export const QuestsProvider: React.FC<React.PropsWithChildren> = ({
 
   useEffect(() => {
     (async () => {
-      const persisted = await loadObject<Persisted>(STORAGE_KEY);
-      if (persisted) {
-        setQuests(persisted.quests || []);
-        setActiveQuestId(persisted.activeQuestId || null);
-      } else {
-        // seed with a default quest for first run
-        const seed: Quest = {
-          id: generateId("quest"),
-          title: "DAILY QUEST - TRAIN TO BECOME\nA FORMIDABLE COMBATANT",
-          goals: [
-            {
-              id: generateId("g"),
-              exercise: "PUSH-UPS",
-              current: 0,
-              target: 100,
-            },
-            {
-              id: generateId("g"),
-              exercise: "SIT-UPS",
-              current: 0,
-              target: 100,
-            },
-            {
-              id: generateId("g"),
-              exercise: "SQUATS",
-              current: 0,
-              target: 100,
-            },
-            {
-              id: generateId("g"),
-              exercise: "RUN",
-              current: 0,
-              target: 10,
-              unit: "KM",
-            },
-          ],
-        };
-        setQuests([seed]);
-        setActiveQuestId(seed.id);
+      try {
+        const persisted = await loadObject<Persisted>(STORAGE_KEY);
+        if (persisted) {
+          setQuests(persisted.quests || []);
+          setActiveQuestId(persisted.activeQuestId || null);
+        } else {
+          // seed with a default quest for first run
+          const seed: Quest = {
+            id: generateId("quest"),
+            title: "DAILY QUEST - TRAIN TO BECOME\nA FORMIDABLE COMBATANT",
+            goals: [
+              {
+                id: generateId("g"),
+                exercise: "PUSH-UPS",
+                current: 0,
+                target: 100,
+              },
+              {
+                id: generateId("g"),
+                exercise: "SIT-UPS",
+                current: 0,
+                target: 100,
+              },
+              {
+                id: generateId("g"),
+                exercise: "SQUATS",
+                current: 0,
+                target: 100,
+              },
+              {
+                id: generateId("g"),
+                exercise: "RUN",
+                current: 0,
+                target: 10,
+                unit: "KM",
+              },
+            ],
+          };
+          setQuests([seed]);
+          setActiveQuestId(seed.id);
+        }
+      } catch (e) {
+        console.error("Failed to load quests:", e);
       }
     })();
   }, []);
