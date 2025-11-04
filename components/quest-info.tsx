@@ -1,4 +1,4 @@
-import { Clock, Info, X } from "lucide-react-native";
+import { Check, Clock, Info, X } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   AppState,
@@ -32,6 +32,8 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
 }) => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [clockColor, setClockColor] = useState("#06b6d4");
+
+  const allGoalsComplete = goals.every((goal) => goal.current >= goal.target);
 
   useEffect(() => {
     const getGradientColor = (percentage: number) => {
@@ -68,7 +70,7 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
       const startOfDay = new Date(
         now.getFullYear(),
         now.getMonth(),
-        now.getDate(),
+        now.getDate()
       );
       const secondsInDay = 24 * 60 * 60;
       const secondsPassed = (now.getTime() - startOfDay.getTime()) / 1000;
@@ -99,7 +101,10 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
       }
     };
 
-    const subscription = AppState.addEventListener("change", handleAppStateChange);
+    const subscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange
+    );
 
     startTimer(); // initial start
 
@@ -124,56 +129,77 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
         <Text className="text-white text-2xl text-center mb-6">{title}</Text>
 
         <View className="mb-6">
-          <Text className="text-green-400 text-xl mb-4">GOALS</Text>
-          {goals.map((goal, index) => (
-            <TouchableOpacity
-              key={goal.id || index}
-              onPress={() => {
-                setSelectedIndex(index);
-                onGoalPress?.(goal, index);
-              }}
-              className={`mb-3 p-2 rounded-lg ${selectedIndex === index ? "bg-cyan-500/20" : ""}`}
-              activeOpacity={0.7}
-            >
-              <View className="flex-row justify-between items-center">
-                <Text
-                  className={`text-lg ${selectedIndex === index ? "text-cyan-300" : "text-white"} ${selectedIndex === index ? "font-bold" : ""}`}
-                >
-                  -{goal.exercise}
-                </Text>
-                <Text
-                  className={`text-lg ${selectedIndex === index ? "text-cyan-300" : "text-white"} ${selectedIndex === index ? "font-bold" : ""}`}
-                >
-                  [{goal.current}/{goal.target}
-                  {goal.unit || ""}]
-                </Text>
-              </View>
-              {selectedIndex === index && (
-                <View
-                  className="absolute inset-0 border border-cyan-400 rounded-lg"
-                  style={{
-                    shadowColor: "#06b6d4",
-                    shadowOffset: { width: 0, height: 0 },
-                    shadowOpacity: 0.5,
-                    shadowRadius: 8,
-                  }}
-                />
-              )}
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        <View className="mb-6">
-          <Text className="text-red-500 text-lg mb-2">CAUTION!</Text>
-          <Text className="text-white text-lg text-center">
-            - IF THE DAILY QUEST{"\n"}REMAINS INCOMPLETE, PENALTIES{"\n"}
-            WILL BE GIVEN ACCORDINGLY.
+          <Text className="text-center text-green-400 text-2xl font-bold mb-4">
+            GOALS
           </Text>
+          {goals.map((goal, index) => {
+            const isComplete = goal.current >= goal.target;
+            return (
+              <TouchableOpacity
+                key={goal.id || index}
+                onPress={() => {
+                  setSelectedIndex(index);
+                  onGoalPress?.(goal, index);
+                }}
+                className={`mb-3 p-2 rounded-lg ${
+                  selectedIndex === index ? "bg-cyan-500/20" : ""
+                }`}
+                activeOpacity={0.7}
+              >
+                <View className="flex-row justify-between items-center">
+                  <Text
+                    className={`text-lg ${
+                      selectedIndex === index ? "text-cyan-300" : "text-white"
+                    } ${selectedIndex === index ? "font-bold" : ""}`}
+                  >
+                    -{goal.exercise}
+                  </Text>
+                  <View className="flex-row items-center">
+                    <Text
+                      className={`text-lg ${
+                        selectedIndex === index ? "text-cyan-300" : "text-white"
+                      } ${selectedIndex === index ? "font-bold" : ""}`}
+                    >
+                      [{goal.current}/{goal.target}
+                      {goal.unit || ""}]
+                    </Text>
+                    {isComplete && (
+                      <Check size={20} color="#22c55e" className="ml-2" />
+                    )}
+                  </View>
+                </View>
+                {selectedIndex === index && (
+                  <View
+                    className="absolute inset-0 border border-cyan-400 rounded-lg"
+                    style={{
+                      shadowColor: "#06b6d4",
+                      shadowOffset: { width: 0, height: 0 },
+                      shadowOpacity: 0.5,
+                      shadowRadius: 8,
+                    }}
+                  />
+                )}
+              </TouchableOpacity>
+            );
+          })}
         </View>
 
-        <View className="items-center mt-4">
-          <Clock size={40} color={clockColor} />
-        </View>
+        {!allGoalsComplete && (
+          <View className="mb-6">
+            <Text className="text-white text-lg text-center">
+              <Text className="text-red-500 font-bold text-lg mb-2">CAUTION! </Text>- IF
+              THE DAILY QUEST{"\n"}REMAINS INCOMPLETE, PENALTIES{"\n"}
+              WILL BE GIVEN ACCORDINGLY.
+            </Text>
+          </View>
+        )}
+
+        {!allGoalsComplete && (
+          <View className="items-center mt-4">
+            <Clock size={40} color={clockColor} />
+          </View>
+        )}
+
       </ScrollView>
 
       <View className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-cyan-500/50 rounded-tl-xl" />
