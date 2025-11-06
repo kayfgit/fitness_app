@@ -36,83 +36,86 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
   const allGoalsComplete = goals.every((goal) => goal.current >= goal.target);
 
   useEffect(() => {
-    const getGradientColor = (percentage: number) => {
-      const green = { r: 34, g: 197, b: 94 };
-      const yellow = { r: 250, g: 204, b: 21 };
-      const orange = { r: 249, g: 115, b: 22 };
-      const red = { r: 239, g: 68, b: 68 };
+    if (!allGoalsComplete) {
+      const getGradientColor = (percentage: number) => {
+        const green = { r: 34, g: 197, b: 94 };
+        const yellow = { r: 250, g: 204, b: 21 };
+        const orange = { r: 249, g: 115, b: 22 };
+        const red = { r: 239, g: 68, b: 68 };
 
-      let c1, c2, p;
+        let c1, c2, p;
 
-      if (percentage < 1 / 3) {
-        c1 = green;
-        c2 = yellow;
-        p = percentage * 3;
-      } else if (percentage < 2 / 3) {
-        c1 = yellow;
-        c2 = orange;
-        p = (percentage - 1 / 3) * 3;
-      } else {
-        c1 = orange;
-        c2 = red;
-        p = (percentage - 2 / 3) * 3;
-      }
+        if (percentage < 1 / 3) {
+          c1 = green;
+          c2 = yellow;
+          p = percentage * 3;
+        } else if (percentage < 2 / 3) {
+          c1 = yellow;
+          c2 = orange;
+          p = (percentage - 1 / 3) * 3;
+        } else {
+          c1 = orange;
+          c2 = red;
+          p = (percentage - 2 / 3) * 3;
+        }
 
-      const r = Math.round(c1.r * (1 - p) + c2.r * p);
-      const g = Math.round(c1.g * (1 - p) + c2.g * p);
-      const b = Math.round(c1.b * (1 - p) + c2.b * p);
+        const r = Math.round(c1.r * (1 - p) + c2.r * p);
+        const g = Math.round(c1.g * (1 - p) + c2.g * p);
+        const b = Math.round(c1.b * (1 - p) + c2.b * p);
 
-      return `rgb(${r}, ${g}, ${b})`;
-    };
+        return `rgb(${r}, ${g}, ${b})`;
+      };
 
-    const updateColor = () => {
-      const now = new Date();
-      const startOfDay = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate()
+      const updateColor = () => {
+        const now = new Date();
+        const startOfDay = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate()
+        );
+        const secondsInDay = 24 * 60 * 60;
+        const secondsPassed = (now.getTime() - startOfDay.getTime()) / 1000;
+        const percentage = secondsPassed / secondsInDay;
+        setClockColor(getGradientColor(percentage));
+      };
+
+      let interval: NodeJS.Timeout | null = null;
+
+      const startTimer = () => {
+        if (interval) clearInterval(interval);
+        updateColor();
+        //@ts-ignore
+        interval = setInterval(updateColor, 60000);
+      };
+
+      const stopTimer = () => {
+        if (interval) {
+          clearInterval(interval);
+          interval = null;
+        }
+      };
+
+      const handleAppStateChange = (nextAppState: AppStateStatus) => {
+        if (nextAppState === "active") {
+          startTimer();
+        } else {
+          stopTimer();
+        }
+      };
+
+      const subscription = AppState.addEventListener(
+        "change",
+        handleAppStateChange
       );
-      const secondsInDay = 24 * 60 * 60;
-      const secondsPassed = (now.getTime() - startOfDay.getTime()) / 1000;
-      const percentage = secondsPassed / secondsInDay;
-      setClockColor(getGradientColor(percentage));
-    };
 
-    let interval: NodeJS.Timeout | null = null;
+      startTimer(); // initial start
 
-    const startTimer = () => {
-      if (interval) clearInterval(interval);
-      updateColor();
-      interval = setInterval(updateColor, 60000);
-    };
-
-    const stopTimer = () => {
-      if (interval) {
-        clearInterval(interval);
-        interval = null;
-      }
-    };
-
-    const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (nextAppState === "active") {
-        startTimer();
-      } else {
+      return () => {
+        subscription.remove();
         stopTimer();
-      }
-    };
-
-    const subscription = AppState.addEventListener(
-      "change",
-      handleAppStateChange
-    );
-
-    startTimer(); // initial start
-
-    return () => {
-      subscription.remove();
-      stopTimer();
-    };
-  }, []);
+      };
+    }
+  }, [allGoalsComplete]);
   return (
     <View className="w-full max-w-md bg-slate-800/90 rounded-3xl shadow-lg border border-cyan-500/20">
       <View className="flex-row justify-between items-center p-4 border-b border-cyan-500/20">
@@ -187,8 +190,10 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
         {!allGoalsComplete && (
           <View className="mb-6">
             <Text className="text-white text-lg text-center">
-              <Text className="text-red-500 font-bold text-lg mb-2">CAUTION! </Text>- IF
-              THE DAILY QUEST{"\n"}REMAINS INCOMPLETE, PENALTIES{"\n"}
+              <Text className="text-red-500 font-bold text-lg mb-2">
+                CAUTION!{" "}
+              </Text>
+              - IF THE DAILY QUEST{"\n"}REMAINS INCOMPLETE, PENALTIES{"\n"}
               WILL BE GIVEN ACCORDINGLY.
             </Text>
           </View>
@@ -199,7 +204,6 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
             <Clock size={40} color={clockColor} />
           </View>
         )}
-
       </ScrollView>
 
       <View className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-cyan-500/50 rounded-tl-xl" />
