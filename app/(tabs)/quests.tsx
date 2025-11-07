@@ -107,20 +107,26 @@ export default function QuestHubScreen() {
                     </Pressable>
                   </View>
                 </View>
-                    <Pressable
-                      onPress={() => {
-                        const created = createQuest("NEW QUEST");
-                        router.push({
-                          pathname: "/quest-edit",
-                          params: { id: created.id },
-                        } as any);
-                      }}
-                      className={`mt-4 self-center flex-row items-center gap-2 rounded-full border border-cyan-500/40 px-4 py-2 bg-slate-800/60 ${isCompleted ? "opacity-50" : ""}`}
-                      disabled={isCompleted}
-                    >
-                      <Plus size={20} color="#06b6d4" />
-                      <Text className="text-cyan-300 text-base">New Quest</Text>
-                    </Pressable>
+                <Pressable
+                  onPress={() => {
+                    const created = createQuest("NEW QUEST");
+                    router.push({
+                      pathname: "/quest-edit",
+                      params: { id: created.id },
+                    } as any);
+                  }}
+                  className={`mt-4 self-center flex-row items-center gap-2 rounded-full border border-cyan-500/40 px-4 py-2 bg-slate-800/60 ${isCompleted ? "opacity-50" : ""}`}
+                  disabled={isCompleted}
+                >
+                  <Plus size={20} color="#06b6d4" />
+                  <Text className="text-cyan-300 text-base">New Quest</Text>
+                </Pressable>
+
+                {isCompleted && (
+                  <Text className="text-center mt-20 font-bold text-white text-base">
+                    QuestHub disabled if current quest has been completed.
+                  </Text>
+                )}
               </View>
             );
           })}

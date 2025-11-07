@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { ChevronRight, Link2, Settings, User2 } from "lucide-react-native";
+import { ChevronRight, TriangleAlert, Bell, User2, Palette, ChartLine } from "lucide-react-native";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -49,21 +49,21 @@ export default function ProfileScreen() {
           onPress={() =>
             router.push({ pathname: "/(tabs)/profile/stats" } as any)
           }
-          icon={<User2 size={20} color="#22d3ee" />}
+          icon={<ChartLine size={20} color="#22d3ee" />}
         />
         <Row
           label="Notifications"
           onPress={() =>
             router.push({ pathname: "/(tabs)/profile/notifications" } as any)
           }
-          icon={<Settings size={20} color="#22d3ee" />}
+          icon={<Bell size={20} color="#22d3ee" />}
         />
         <Row
           label="Penalties"
           onPress={() =>
             router.push({ pathname: "/(tabs)/profile/penalties" } as any)
           }
-          icon={<Link2 size={20} color="#22d3ee" />}
+          icon={<TriangleAlert size={20} color="#22d3ee" />}
         />
 
 
@@ -72,7 +72,7 @@ export default function ProfileScreen() {
           onPress={() =>
             router.push({ pathname: "/(tabs)/profile/theme" } as any)
           }
-          icon={<Link2 size={20} color="#22d3ee" />}
+          icon={<Palette size={20} color="#22d3ee" />}
         />
 
         <View className="mt-auto pt-4">
