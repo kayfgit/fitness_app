@@ -216,9 +216,11 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
 
         {allGoalsComplete && (
           <View className="mb-6">
+            {!isCompleted && (
             <Text className="mb-6 text-white text-lg text-center">
               ALL GOALS HAVE BEEN MET!
             </Text>
+            )}
 
             <Pressable
               onPress={onCompleteQuest}
