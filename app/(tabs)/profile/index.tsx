@@ -3,9 +3,11 @@ import { ChevronRight, Link2, Settings, User2 } from "lucide-react-native";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useQuests } from "../../../context/quests";
 
 export default function ProfileScreen() {
   const router = useRouter();
+  const { devModeBypass, toggleDevMode } = useQuests();
 
   const Row = ({
     label,
@@ -43,13 +45,6 @@ export default function ProfileScreen() {
         </View>
 
         <Row
-          label="Account"
-          onPress={() =>
-            router.push({ pathname: "/(tabs)/profile/stats" } as any)
-          }
-          icon={<User2 size={20} color="#22d3ee" />}
-        />
-        <Row
           label="Stats"
           onPress={() =>
             router.push({ pathname: "/(tabs)/profile/stats" } as any)
@@ -57,19 +52,39 @@ export default function ProfileScreen() {
           icon={<User2 size={20} color="#22d3ee" />}
         />
         <Row
-          label="Settings"
+          label="Notifications"
           onPress={() =>
-            router.push({ pathname: "/(tabs)/profile/settings" } as any)
+            router.push({ pathname: "/(tabs)/profile/notifications" } as any)
           }
           icon={<Settings size={20} color="#22d3ee" />}
         />
         <Row
-          label="Links"
+          label="Penalties"
           onPress={() =>
-            router.push({ pathname: "/(tabs)/profile/links" } as any)
+            router.push({ pathname: "/(tabs)/profile/penalties" } as any)
           }
           icon={<Link2 size={20} color="#22d3ee" />}
         />
+
+
+        <Row
+          label="Themes"
+          onPress={() =>
+            router.push({ pathname: "/(tabs)/profile/theme" } as any)
+          }
+          icon={<Link2 size={20} color="#22d3ee" />}
+        />
+
+        <View className="mt-auto pt-4">
+          <Pressable
+            onPress={toggleDevMode}
+            className="rounded-2xl border border-yellow-500/30 bg-slate-800/70 px-4 py-4"
+          >
+            <Text className="text-center text-yellow-400">
+              Dev: Bypass Daily Reset ({devModeBypass ? "ON" : "OFF"})
+            </Text>
+          </Pressable>
+        </View>
       </View>
     </SafeAreaView>
   );

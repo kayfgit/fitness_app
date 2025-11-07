@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import {
   AppState,
   AppStateStatus,
+  Pressable,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -22,6 +23,8 @@ type QuestInfoProps = {
   goals: QuestGoal[];
   onClose?: () => void;
   onGoalPress?: (goal: QuestGoal, index: number) => void;
+  onCompleteQuest: () => void;
+  isCompleted: boolean;
 };
 
 const QuestInfo: React.FC<QuestInfoProps> = ({
@@ -29,6 +32,8 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
   goals,
   onClose,
   onGoalPress,
+  onCompleteQuest,
+  isCompleted,
 }) => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [clockColor, setClockColor] = useState("#06b6d4");
@@ -141,13 +146,17 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
               <TouchableOpacity
                 key={goal.id || index}
                 onPress={() => {
+                  if (isCompleted) return;
                   setSelectedIndex(index);
                   onGoalPress?.(goal, index);
                 }}
                 className={`mb-3 p-2 rounded-lg ${
                   selectedIndex === index ? "bg-cyan-500/20" : ""
+                } ${
+                  isCompleted ? "opacity-50" : ""
                 }`}
                 activeOpacity={0.7}
+                disabled={isCompleted}
               >
                 <View className="flex-row justify-between items-center">
                   <Text
@@ -202,6 +211,23 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
         {!allGoalsComplete && (
           <View className="items-center mt-4">
             <Clock size={40} color={clockColor} />
+          </View>
+        )}
+
+        {allGoalsComplete && (
+          <View className="mb-6">
+            <Text className="mb-6 text-white text-lg text-center">
+              ALL GOALS HAVE BEEN MET!
+            </Text>
+
+            <Pressable
+              onPress={onCompleteQuest}
+              disabled={isCompleted}
+              className={`rounded-2xl border border-cyan-500/30 ${isCompleted ? 'bg-gray-600/70' : 'bg-green-800/70'} px-4 py-4`}>
+              <Text className={`text-center font-bold text-lg ${isCompleted ? 'text-gray-400' : 'text-green-500'}`}>
+                {isCompleted ? "COMPLETED" : "COMPLETE QUEST"}
+              </Text>
+            </Pressable>
           </View>
         )}
       </ScrollView>

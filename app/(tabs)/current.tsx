@@ -6,7 +6,7 @@ import QuestInfo from "../../components/quest-info";
 import { useQuests } from "../../context/quests";
 
 export default function CurrentScreen() {
-  const { activeQuest, updateGoalProgress } = useQuests();
+  const { activeQuest, updateGoalProgress, isQuestCompletedToday, completeQuest } = useQuests();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState<{
     exercise: string;
@@ -27,6 +27,8 @@ export default function CurrentScreen() {
     }
   };
 
+  const isCompleted = activeQuest ? isQuestCompletedToday(activeQuest.id) : false;
+
   return (
     <SafeAreaView className="flex-1 bg-slate-900">
       <View className="flex-1 items-center justify-center p-4">
@@ -35,6 +37,8 @@ export default function CurrentScreen() {
             title={activeQuest.title}
             goals={activeQuest.goals}
             onGoalPress={handleGoalPress}
+            isCompleted={isCompleted}
+            onCompleteQuest={() => completeQuest(activeQuest.id)}
           />
         ) : (
           <Text className="text-slate-300">No active quest selected.</Text>

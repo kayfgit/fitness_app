@@ -36,9 +36,15 @@ type QuestsState = {
     goalId: string,
     newProgress: number
   ) => void;
+  isQuestCompletedToday: (questId: string) => boolean;
+  completeQuest: (questId: string) => void;
+  devModeBypass: boolean;
+  toggleDevMode: () => void;
 };
 
 const STORAGE_KEY = "quests_state_v1";
+const QUEST_COMPLETION_KEY = "quest_completion_v1";
+const DEV_MODE_BYPASS_KEY = "dev_mode_bypass_v1";
 
 const QuestsContext = createContext<QuestsState | undefined>(undefined);
 
@@ -53,14 +59,56 @@ export const QuestsProvider: React.FC<React.PropsWithChildren> = ({
 }) => {
   const [quests, setQuests] = useState<Quest[]>([]);
   const [activeQuestId, setActiveQuestId] = useState<string | null>(null);
+  const [questCompletion, setQuestCompletion] = useState<Record<string, string>>({});
+  const [devModeBypass, setDevModeBypass] = useState(false);
 
   useEffect(() => {
     (async () => {
       try {
         const persisted = await loadObject<Persisted>(STORAGE_KEY);
+        const completion = await loadObject<Record<string, string>>(
+          QUEST_COMPLETION_KEY
+        );
+        const devMode = await loadObject<boolean>(DEV_MODE_BYPASS_KEY);
+
+        if (devMode) {
+          setDevModeBypass(devMode);
+        }
+
+        if (completion) {
+          setQuestCompletion(completion);
+        }
+
         if (persisted) {
-          setQuests(persisted.quests || []);
+          const today = new Date().toISOString().slice(0, 10);
+          const resetQuests = persisted.quests.map((quest) => {
+            const completedDate = completion?.[quest.id];
+            if (completedDate && completedDate < today) {
+              return {
+                ...quest,
+                goals: quest.goals.map((g) => ({ ...g, current: 0 })),
+              };
+            }
+            return quest;
+          });
+
+          setQuests(resetQuests);
           setActiveQuestId(persisted.activeQuestId || null);
+
+          if (completion) {
+            const newCompletion = { ...completion };
+            let needsUpdate = false;
+            for (const questId in newCompletion) {
+              if (newCompletion[questId] < today) {
+                delete newCompletion[questId];
+                needsUpdate = true;
+              }
+            }
+            if (needsUpdate) {
+              setQuestCompletion(newCompletion);
+              await saveObject(QUEST_COMPLETION_KEY, newCompletion);
+            }
+          }
         } else {
           // seed with a default quest for first run
           const seed: Quest = {
@@ -195,6 +243,31 @@ export const QuestsProvider: React.FC<React.PropsWithChildren> = ({
     [activeQuestId, persist]
   );
 
+  const isQuestCompletedToday = useCallback(
+    (questId: string): boolean => {
+      if (devModeBypass) return false;
+      const today = new Date().toISOString().slice(0, 10);
+      return questCompletion[questId] === today;
+    },
+    [questCompletion, devModeBypass]
+  );
+
+  const completeQuest = useCallback(
+    async (questId: string) => {
+      const today = new Date().toISOString().slice(0, 10);
+      const newCompletion = { ...questCompletion, [questId]: today };
+      setQuestCompletion(newCompletion);
+      await saveObject(QUEST_COMPLETION_KEY, newCompletion);
+    },
+    [questCompletion]
+  );
+
+  const toggleDevMode = useCallback(async () => {
+    const nextValue = !devModeBypass;
+    setDevModeBypass(nextValue);
+    await saveObject(DEV_MODE_BYPASS_KEY, nextValue);
+  }, [devModeBypass]);
+
   const activeQuest = useMemo(
     () => quests.find((q) => q.id === activeQuestId) || null,
     [quests, activeQuestId]
@@ -211,6 +284,10 @@ export const QuestsProvider: React.FC<React.PropsWithChildren> = ({
       setActiveQuestId: setActive,
       createQuest,
       updateGoalProgress,
+      isQuestCompletedToday,
+      completeQuest,
+      devModeBypass,
+      toggleDevMode,
     }),
     [
       quests,
@@ -222,6 +299,10 @@ export const QuestsProvider: React.FC<React.PropsWithChildren> = ({
       setActive,
       createQuest,
       updateGoalProgress,
+      isQuestCompletedToday,
+      completeQuest,
+      devModeBypass,
+      toggleDevMode,
     ]
   );
 

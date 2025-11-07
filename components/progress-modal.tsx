@@ -25,7 +25,9 @@ const ProgressModal: React.FC<ProgressModalProps> = ({
   }, [goal]);
 
   const handleAdjust = (amount: number) => {
-    setTempValue((prev) => Math.max(0, prev + amount));
+    if (!goal) return;
+    const maxAllowed = goal.target * 2;
+    setTempValue((prev) => Math.min(maxAllowed, Math.max(0, prev + amount)));
   };
 
   const handleSave = () => {
@@ -41,6 +43,8 @@ const ProgressModal: React.FC<ProgressModalProps> = ({
   };
 
   if (!goal) return null;
+
+  const maxAllowed = goal.target * 2; // Define maxAllowed here for use in JSX
 
   return (
     <Modal visible={visible} transparent animationType="fade">
@@ -75,23 +79,26 @@ const ProgressModal: React.FC<ProgressModalProps> = ({
               <Pressable
                 onPress={() => handleAdjust(-100)}
                 className="flex-1 py-4 rounded-xl border border-cyan-500/40 bg-slate-800/70 items-center"
+                disabled={tempValue <= 0}
               >
-                <Minus size={24} color="#06b6d4" />
-                <Text className="text-cyan-300 mt-2 font-semibold">100</Text>
+                <Minus size={24} color={tempValue <= 0 ? "#6b7280" : "#06b6d4"} />
+                <Text className={`mt-2 font-semibold ${tempValue <= 0 ? "text-gray-500" : "text-cyan-300"}`}>100</Text>
               </Pressable>
               <Pressable
                 onPress={() => handleAdjust(-10)}
                 className="flex-1 py-4 rounded-xl border border-cyan-500/40 bg-slate-800/70 items-center"
+                disabled={tempValue <= 0}
               >
-                <Minus size={24} color="#06b6d4" />
-                <Text className="text-cyan-300 mt-2 font-semibold">10</Text>
+                <Minus size={24} color={tempValue <= 0 ? "#6b7280" : "#06b6d4"} />
+                <Text className={`mt-2 font-semibold ${tempValue <= 0 ? "text-gray-500" : "text-cyan-300"}`}>10</Text>
               </Pressable>
               <Pressable
                 onPress={() => handleAdjust(-1)}
                 className="flex-1 py-4 rounded-xl border border-cyan-500/40 bg-slate-800/70 items-center"
+                disabled={tempValue <= 0}
               >
-                <Minus size={24} color="#06b6d4" />
-                <Text className="text-cyan-300 mt-2 font-semibold">1</Text>
+                <Minus size={24} color={tempValue <= 0 ? "#6b7280" : "#06b6d4"} />
+                <Text className={`mt-2 font-semibold ${tempValue <= 0 ? "text-gray-500" : "text-cyan-300"}`}>1</Text>
               </Pressable>
             </View>
 
@@ -99,23 +106,26 @@ const ProgressModal: React.FC<ProgressModalProps> = ({
               <Pressable
                 onPress={() => handleAdjust(1)}
                 className="flex-1 py-4 rounded-xl border border-cyan-500/40 bg-slate-800/70 items-center"
+                disabled={tempValue >= maxAllowed}
               >
-                <Plus size={24} color="#06b6d4" />
-                <Text className="text-cyan-300 mt-2 font-semibold">1</Text>
+                <Plus size={24} color={tempValue >= maxAllowed ? "#6b7280" : "#06b6d4"} />
+                <Text className={`mt-2 font-semibold ${tempValue >= maxAllowed ? "text-gray-500" : "text-cyan-300"}`}>1</Text>
               </Pressable>
               <Pressable
                 onPress={() => handleAdjust(10)}
                 className="flex-1 py-4 rounded-xl border border-cyan-500/40 bg-slate-800/70 items-center"
+                disabled={tempValue >= maxAllowed}
               >
-                <Plus size={24} color="#06b6d4" />
-                <Text className="text-cyan-300 mt-2 font-semibold">10</Text>
+                <Plus size={24} color={tempValue >= maxAllowed ? "#6b7280" : "#06b6d4"} />
+                <Text className={`mt-2 font-semibold ${tempValue >= maxAllowed ? "text-gray-500" : "text-cyan-300"}`}>10</Text>
               </Pressable>
               <Pressable
                 onPress={() => handleAdjust(100)}
                 className="flex-1 py-4 rounded-xl border border-cyan-500/40 bg-slate-800/70 items-center"
+                disabled={tempValue >= maxAllowed}
               >
-                <Plus size={24} color="#06b6d4" />
-                <Text className="text-cyan-300 mt-2 font-semibold">100</Text>
+                <Plus size={24} color={tempValue >= maxAllowed ? "#6b7280" : "#06b6d4"} />
+                <Text className={`mt-2 font-semibold ${tempValue >= maxAllowed ? "text-gray-500" : "text-cyan-300"}`}>100</Text>
               </Pressable>
             </View>
 
