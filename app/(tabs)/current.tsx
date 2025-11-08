@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import ProgressModal from "../../components/progress-modal";
 import QuestInfo from "../../components/quest-info";
 import { useQuests } from "../../context/quests";
+import { useTheme } from "../../context/theme";
 
 export default function CurrentScreen() {
   const { activeQuest, updateGoalProgress, isQuestCompletedToday, completeQuest } = useQuests();
@@ -15,6 +16,7 @@ export default function CurrentScreen() {
     target: number;
     unit?: string;
   } | null>(null);
+  const { theme } = useTheme();
 
   const handleGoalPress = (goal: typeof selectedGoal, _index: number) => {
     setSelectedGoal(goal);
@@ -30,8 +32,8 @@ export default function CurrentScreen() {
   const isCompleted = activeQuest ? isQuestCompletedToday(activeQuest.id) : false;
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-900">
-      <View className="flex-1 items-center justify-center p-4">
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: 16 }}>
         {activeQuest ? (
           <QuestInfo
             title={activeQuest.title}
@@ -41,7 +43,7 @@ export default function CurrentScreen() {
             onCompleteQuest={() => completeQuest(activeQuest.id)}
           />
         ) : (
-          <Text className="text-slate-300">No active quest selected.</Text>
+          <Text style={{ color: theme.text }}>No active quest selected.</Text>
         )}
       </View>
 

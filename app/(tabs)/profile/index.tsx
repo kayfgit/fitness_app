@@ -4,10 +4,12 @@ import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuests } from "../../../context/quests";
+import { useTheme } from "../../../context/theme";
 
 export default function ProfileScreen() {
   const router = useRouter();
   const { devModeBypass, toggleDevMode } = useQuests();
+  const { theme } = useTheme();
 
   const Row = ({
     label,
@@ -20,26 +22,52 @@ export default function ProfileScreen() {
   }) => (
     <Pressable
       onPress={onPress}
-      className="mb-4 rounded-2xl border border-cyan-500/30 bg-slate-800/70 px-4 py-4"
+      style={{
+        marginBottom: 16,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: theme.primary + "4D",
+        backgroundColor: theme.panel + "B3",
+        paddingHorizontal: 16,
+        paddingVertical: 16,
+      }}
     >
-      <View className="flex-row items-center justify-between">
-        <View className="flex-row items-center gap-3">
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
           {icon}
-          <Text className="text-white text-lg">{label}</Text>
+          <Text style={{ color: theme["text-light"], fontSize: 18 }}>{label}</Text>
         </View>
-        <ChevronRight size={20} color="#22d3ee" />
+        <ChevronRight size={20} color={theme["primary-light"]} />
       </View>
     </Pressable>
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-900">
-      <View className="flex-1 p-6">
-        <View className="items-center mb-8">
-          <View className="w-24 h-24 rounded-full border-2 border-cyan-400/60 bg-slate-800 items-center justify-center">
-            <User2 size={40} color="#06b6d4" />
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
+      <View style={{ flex: 1, padding: 24 }}>
+        <View style={{ alignItems: "center", marginBottom: 32 }}>
+          <View
+            style={{
+              width: 96,
+              height: 96,
+              borderRadius: 48,
+              borderWidth: 2,
+              borderColor: theme["primary-light"] + "99",
+              backgroundColor: theme.panel,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <User2 size={40} color={theme.primary} />
           </View>
-          <Text className="mt-3 text-white text-xl tracking-wide">
+          <Text
+            style={{
+              marginTop: 12,
+              color: theme["text-light"],
+              fontSize: 20,
+              letterSpacing: 0.05,
+            }}
+          >
             PROFILE
           </Text>
         </View>
@@ -49,21 +77,21 @@ export default function ProfileScreen() {
           onPress={() =>
             router.push({ pathname: "/(tabs)/profile/stats" } as any)
           }
-          icon={<ChartLine size={20} color="#22d3ee" />}
+          icon={<ChartLine size={20} color={theme["primary-light"]} />}
         />
         <Row
           label="Notifications"
           onPress={() =>
             router.push({ pathname: "/(tabs)/profile/notifications" } as any)
           }
-          icon={<Bell size={20} color="#22d3ee" />}
+          icon={<Bell size={20} color={theme["primary-light"]} />}
         />
         <Row
           label="Penalties"
           onPress={() =>
             router.push({ pathname: "/(tabs)/profile/penalties" } as any)
           }
-          icon={<TriangleAlert size={20} color="#22d3ee" />}
+          icon={<TriangleAlert size={20} color={theme["primary-light"]} />}
         />
 
 
@@ -72,15 +100,22 @@ export default function ProfileScreen() {
           onPress={() =>
             router.push({ pathname: "/(tabs)/profile/theme" } as any)
           }
-          icon={<Palette size={20} color="#22d3ee" />}
+          icon={<Palette size={20} color={theme["primary-light"]} />}
         />
 
-        <View className="mt-auto pt-4">
+        <View style={{ marginTop: "auto", paddingTop: 16 }}>
           <Pressable
             onPress={toggleDevMode}
-            className="rounded-2xl border border-yellow-500/30 bg-slate-800/70 px-4 py-4"
+            style={{
+              borderRadius: 16,
+              borderWidth: 1,
+              borderColor: "#f59e0b" + "4D",
+              backgroundColor: theme.panel + "B3",
+              paddingHorizontal: 16,
+              paddingVertical: 16,
+            }}
           >
-            <Text className="text-center text-yellow-400">
+            <Text style={{ textAlign: "center", color: "#fbbf24" }}>
               Dev: Bypass Daily Reset ({devModeBypass ? "ON" : "OFF"})
             </Text>
           </Pressable>

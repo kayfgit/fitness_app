@@ -1,6 +1,7 @@
 import { AlertTriangle, Minus, Plus } from "lucide-react-native";
 import React, { useState } from "react";
 import { Modal, Pressable, Text, View } from "react-native";
+import { useTheme } from "../context/theme";
 import { QuestGoal } from "./quest-info";
 
 type ProgressModalProps = {
@@ -16,6 +17,7 @@ const ProgressModal: React.FC<ProgressModalProps> = ({
   onClose,
   onSave,
 }) => {
+  const { theme } = useTheme();
   const [tempValue, setTempValue] = useState(0);
 
   React.useEffect(() => {
@@ -48,107 +50,366 @@ const ProgressModal: React.FC<ProgressModalProps> = ({
 
   return (
     <Modal visible={visible} transparent animationType="fade">
-      <View className="flex-1 bg-black/80 items-center justify-center p-6">
-        <View className="w-full max-w-sm bg-slate-900/95 rounded-3xl border-2 border-cyan-400 shadow-2xl overflow-hidden">
-          <View className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-blue-500/10" />
-          <View className="p-6 border-b border-cyan-500/30">
-            <View className="flex-row items-center gap-3 mb-2">
-              <View className="w-10 h-10 rounded-full bg-cyan-500/20 border-2 border-cyan-400 items-center justify-center">
-                <AlertTriangle size={20} color="#06b6d4" />
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "rgba(0,0,0,0.8)",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 24,
+        }}
+      >
+        <View
+          style={{
+            width: "100%",
+            maxWidth: 384,
+            backgroundColor: theme.panel,
+            borderRadius: 24,
+            borderWidth: 2,
+            borderColor: theme["primary-light"],
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+            overflow: "hidden",
+          }}
+        >
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: theme.primary + "1A",
+            }}
+          />
+          <View
+            style={{
+              padding: 24,
+              borderBottomWidth: 1,
+              borderBottomColor: theme.primary + "4D",
+            }}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 8 }}>
+              <View
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 20,
+                  backgroundColor: theme.primary + "33",
+                  borderWidth: 2,
+                  borderColor: theme["primary-light"],
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <AlertTriangle size={20} color={theme.primary} />
               </View>
-              <Text className="text-cyan-300 text-xl font-bold">
+              <Text
+                style={{
+                  color: theme["primary-lighter"],
+                  fontSize: 20,
+                  fontWeight: "bold",
+                }}
+              >
                 NOTIFICATION
               </Text>
             </View>
           </View>
 
-          <View className="p-6">
-            <Text className="text-cyan-200 text-lg mb-6 text-center leading-6">
-              Update progress for{`\n`}
-              <Text className="font-bold text-cyan-300">{goal.exercise}</Text>
+          <View style={{ padding: 24 }}>
+            <Text
+              style={{
+                color: theme["primary-lighter"],
+                fontSize: 18,
+                marginBottom: 24,
+                textAlign: "center",
+                lineHeight: 24,
+              }}
+            >
+              Update progress for{"\n"}
+              <Text style={{ fontWeight: "bold", color: theme["primary-lighter"] }}>
+                {goal.exercise}
+              </Text>
             </Text>
 
-            <View className="bg-slate-800/70 rounded-2xl border border-cyan-500/40 p-6 mb-6">
-              <Text className="text-cyan-300 text-3xl font-bold text-center">
+            <View
+              style={{
+                backgroundColor: theme.background + "B3",
+                borderRadius: 16,
+                borderWidth: 1,
+                borderColor: theme.primary + "66",
+                padding: 24,
+                marginBottom: 24,
+              }}
+            >
+              <Text
+                style={{
+                  color: theme["primary-lighter"],
+                  fontSize: 30,
+                  fontWeight: "bold",
+                  textAlign: "center",
+                }}
+              >
                 {tempValue} / {goal.target}
                 {goal.unit || ""}
               </Text>
             </View>
 
-            <View className="flex-row gap-3 mb-6">
+            <View style={{ flexDirection: "row", gap: 12, marginBottom: 24 }}>
               <Pressable
                 onPress={() => handleAdjust(-100)}
-                className="flex-1 py-4 rounded-xl border border-cyan-500/40 bg-slate-800/70 items-center"
+                style={{
+                  flex: 1,
+                  paddingVertical: 16,
+                  borderRadius: 12,
+                  borderWidth: 1,
+                  borderColor: theme.primary + "66",
+                  backgroundColor: theme.background + "B3",
+                  alignItems: "center",
+                }}
                 disabled={tempValue <= 0}
               >
-                <Minus size={24} color={tempValue <= 0 ? "#6b7280" : "#06b6d4"} />
-                <Text className={`mt-2 font-semibold ${tempValue <= 0 ? "text-gray-500" : "text-cyan-300"}`}>100</Text>
+                <Minus size={24} color={tempValue <= 0 ? theme.text : theme.primary} />
+                <Text
+                  style={{
+                    marginTop: 8,
+                    fontWeight: "600",
+                    color: tempValue <= 0 ? theme.text : theme["primary-lighter"],
+                  }}
+                >
+                  100
+                </Text>
               </Pressable>
               <Pressable
                 onPress={() => handleAdjust(-10)}
-                className="flex-1 py-4 rounded-xl border border-cyan-500/40 bg-slate-800/70 items-center"
+                style={{
+                  flex: 1,
+                  paddingVertical: 16,
+                  borderRadius: 12,
+                  borderWidth: 1,
+                  borderColor: theme.primary + "66",
+                  backgroundColor: theme.background + "B3",
+                  alignItems: "center",
+                }}
                 disabled={tempValue <= 0}
               >
-                <Minus size={24} color={tempValue <= 0 ? "#6b7280" : "#06b6d4"} />
-                <Text className={`mt-2 font-semibold ${tempValue <= 0 ? "text-gray-500" : "text-cyan-300"}`}>10</Text>
+                <Minus size={24} color={tempValue <= 0 ? theme.text : theme.primary} />
+                <Text
+                  style={{
+                    marginTop: 8,
+                    fontWeight: "600",
+                    color: tempValue <= 0 ? theme.text : theme["primary-lighter"],
+                  }}
+                >
+                  10
+                </Text>
               </Pressable>
               <Pressable
                 onPress={() => handleAdjust(-1)}
-                className="flex-1 py-4 rounded-xl border border-cyan-500/40 bg-slate-800/70 items-center"
+                style={{
+                  flex: 1,
+                  paddingVertical: 16,
+                  borderRadius: 12,
+                  borderWidth: 1,
+                  borderColor: theme.primary + "66",
+                  backgroundColor: theme.background + "B3",
+                  alignItems: "center",
+                }}
                 disabled={tempValue <= 0}
               >
-                <Minus size={24} color={tempValue <= 0 ? "#6b7280" : "#06b6d4"} />
-                <Text className={`mt-2 font-semibold ${tempValue <= 0 ? "text-gray-500" : "text-cyan-300"}`}>1</Text>
+                <Minus size={24} color={tempValue <= 0 ? theme.text : theme.primary} />
+                <Text
+                  style={{
+                    marginTop: 8,
+                    fontWeight: "600",
+                    color: tempValue <= 0 ? theme.text : theme["primary-lighter"],
+                  }}
+                >
+                  1
+                </Text>
               </Pressable>
             </View>
 
-            <View className="flex-row gap-3 mb-6">
+            <View style={{ flexDirection: "row", gap: 12, marginBottom: 24 }}>
               <Pressable
                 onPress={() => handleAdjust(1)}
-                className="flex-1 py-4 rounded-xl border border-cyan-500/40 bg-slate-800/70 items-center"
+                style={{
+                  flex: 1,
+                  paddingVertical: 16,
+                  borderRadius: 12,
+                  borderWidth: 1,
+                  borderColor: theme.primary + "66",
+                  backgroundColor: theme.background + "B3",
+                  alignItems: "center",
+                }}
                 disabled={tempValue >= maxAllowed}
               >
-                <Plus size={24} color={tempValue >= maxAllowed ? "#6b7280" : "#06b6d4"} />
-                <Text className={`mt-2 font-semibold ${tempValue >= maxAllowed ? "text-gray-500" : "text-cyan-300"}`}>1</Text>
+                <Plus
+                  size={24}
+                  color={tempValue >= maxAllowed ? theme.text : theme.primary}
+                />
+                <Text
+                  style={{
+                    marginTop: 8,
+                    fontWeight: "600",
+                    color:
+                      tempValue >= maxAllowed
+                        ? theme.text
+                        : theme["primary-lighter"],
+                  }}
+                >
+                  1
+                </Text>
               </Pressable>
               <Pressable
                 onPress={() => handleAdjust(10)}
-                className="flex-1 py-4 rounded-xl border border-cyan-500/40 bg-slate-800/70 items-center"
+                style={{
+                  flex: 1,
+                  paddingVertical: 16,
+                  borderRadius: 12,
+                  borderWidth: 1,
+                  borderColor: theme.primary + "66",
+                  backgroundColor: theme.background + "B3",
+                  alignItems: "center",
+                }}
                 disabled={tempValue >= maxAllowed}
               >
-                <Plus size={24} color={tempValue >= maxAllowed ? "#6b7280" : "#06b6d4"} />
-                <Text className={`mt-2 font-semibold ${tempValue >= maxAllowed ? "text-gray-500" : "text-cyan-300"}`}>10</Text>
+                <Plus
+                  size={24}
+                  color={tempValue >= maxAllowed ? theme.text : theme.primary}
+                />
+                <Text
+                  style={{
+                    marginTop: 8,
+                    fontWeight: "600",
+                    color:
+                      tempValue >= maxAllowed
+                        ? theme.text
+                        : theme["primary-lighter"],
+                  }}
+                >
+                  10
+                </Text>
               </Pressable>
               <Pressable
                 onPress={() => handleAdjust(100)}
-                className="flex-1 py-4 rounded-xl border border-cyan-500/40 bg-slate-800/70 items-center"
+                style={{
+                  flex: 1,
+                  paddingVertical: 16,
+                  borderRadius: 12,
+                  borderWidth: 1,
+                  borderColor: theme.primary + "66",
+                  backgroundColor: theme.background + "B3",
+                  alignItems: "center",
+                }}
                 disabled={tempValue >= maxAllowed}
               >
-                <Plus size={24} color={tempValue >= maxAllowed ? "#6b7280" : "#06b6d4"} />
-                <Text className={`mt-2 font-semibold ${tempValue >= maxAllowed ? "text-gray-500" : "text-cyan-300"}`}>100</Text>
+                <Plus
+                  size={24}
+                  color={tempValue >= maxAllowed ? theme.text : theme.primary}
+                />
+                <Text
+                  style={{
+                    marginTop: 8,
+                    fontWeight: "600",
+                    color:
+                      tempValue >= maxAllowed
+                        ? theme.text
+                        : theme["primary-lighter"],
+                  }}
+                >
+                  100
+                </Text>
               </Pressable>
             </View>
 
-            <View className="flex-row gap-3 justify-end">
+            <View style={{ flexDirection: "row", gap: 12, justifyContent: "flex-end" }}>
               <Pressable
                 onPress={handleCancel}
-                className="px-6 py-3 rounded-xl border border-red-500/40 bg-slate-800/70"
+                style={{
+                  paddingHorizontal: 24,
+                  paddingVertical: 12,
+                  borderRadius: 12,
+                  borderWidth: 1,
+                  borderColor: theme.danger + "66",
+                  backgroundColor: theme.background + "B3",
+                }}
               >
-                <Text className="text-red-400 font-semibold">CANCEL</Text>
+                <Text style={{ color: theme.danger, fontWeight: "600" }}>CANCEL</Text>
               </Pressable>
               <Pressable
                 onPress={handleSave}
-                className="px-6 py-3 rounded-xl border border-cyan-500/40 bg-cyan-500/20"
+                style={{
+                  paddingHorizontal: 24,
+                  paddingVertical: 12,
+                  borderRadius: 12,
+                  borderWidth: 1,
+                  borderColor: theme.primary + "66",
+                  backgroundColor: theme.primary + "33",
+                }}
               >
-                <Text className="text-cyan-300 font-semibold">SAVE</Text>
+                <Text style={{ color: theme["primary-lighter"], fontWeight: "600" }}>
+                  SAVE
+                </Text>
               </Pressable>
             </View>
           </View>
 
-          <View className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-cyan-400 rounded-tl-xl" />
-          <View className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-cyan-400 rounded-tr-xl" />
-          <View className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-cyan-400 rounded-bl-xl" />
-          <View className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-cyan-400 rounded-br-xl" />
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: 32,
+              height: 32,
+              borderTopWidth: 2,
+              borderLeftWidth: 2,
+              borderColor: theme["primary-light"],
+              borderTopLeftRadius: 22,
+            }}
+          />
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              width: 32,
+              height: 32,
+              borderTopWidth: 2,
+              borderRightWidth: 2,
+              borderColor: theme["primary-light"],
+              borderTopRightRadius: 22,
+            }}
+          />
+          <View
+            style={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              width: 32,
+              height: 32,
+              borderBottomWidth: 2,
+              borderLeftWidth: 2,
+              borderColor: theme["primary-light"],
+              borderBottomLeftRadius: 22,
+            }}
+          />
+          <View
+            style={{
+              position: "absolute",
+              bottom: 0,
+              right: 0,
+              width: 32,
+              height: 32,
+              borderBottomWidth: 2,
+              borderRightWidth: 2,
+              borderColor: theme["primary-light"],
+              borderBottomRightRadius: 22,
+            }}
+          />
         </View>
       </View>
     </Modal>

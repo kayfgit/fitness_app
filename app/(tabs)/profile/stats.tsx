@@ -3,6 +3,7 @@ import { ArrowLeft, ChevronUp } from "lucide-react-native";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "../../../context/theme";
 
 const StatItem = ({
   label,
@@ -12,50 +13,84 @@ const StatItem = ({
   label: string;
   value: string | number;
   showUp?: boolean;
-}) => (
-  <View className="flex-row items-center justify-between">
-    <View className="flex-row items-center gap-2">
-      <Text className="text-slate-400 text-lg">{label}:</Text>
-      <Text className="text-white text-lg font-semibold">{value}</Text>
+}) => {
+  const { theme } = useTheme();
+  return (
+    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+        <Text style={{ color: theme.text, fontSize: 18 }}>{label}:</Text>
+        <Text style={{ color: theme["text-light"], fontSize: 18, fontWeight: "600" }}>{value}</Text>
+      </View>
+      {showUp && (
+        <Pressable
+          style={{
+            padding: 4,
+            backgroundColor: theme.primary + "33",
+            borderRadius: 6,
+          }}
+        >
+          <ChevronUp size={18} color={theme.primary} />
+        </Pressable>
+      )}
     </View>
-    {showUp && (
-      <Pressable className="p-1 bg-cyan-500/20 rounded-md">
-        <ChevronUp size={18} color="#06b6d4" />
-      </Pressable>
-    )}
-  </View>
-);
+  );
+};
 
 export default function ProfileStatsScreen() {
   const router = useRouter();
+  const { theme } = useTheme();
   return (
-    <SafeAreaView className="flex-1 bg-slate-900">
-      <View className="p-4 border-b border-cyan-500/20 bg-slate-900/90 flex-row justify-between items-center">
-        <Pressable onPress={() => router.back()} className="p-2">
-          <ArrowLeft size={22} color="#06b6d4" />
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
+      <View
+        style={{
+          padding: 16,
+          borderBottomWidth: 1,
+          borderBottomColor: theme.primary + "33",
+          backgroundColor: theme.panel + "E6",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Pressable onPress={() => router.back()} style={{ padding: 8 }}>
+          <ArrowLeft size={22} color={theme.primary} />
         </Pressable>
-        <Text className="text-white text-2xl font-bold tracking-widest">
+        <Text
+          style={{
+            color: theme["text-light"],
+            fontSize: 24,
+            fontWeight: "bold",
+            letterSpacing: 0.1,
+          }}
+        >
           STATS
         </Text>
-        <View className="w-8" />
+        <View style={{ width: 32 }} />
       </View>
-      <View className="flex-1 p-6 space-y-6">
-
-        <View className="p-4 bg-slate-800/50 rounded-lg border border-cyan-500/20">
-          <View className="flex-row flex-wrap justify-between">
-            <View className="w-1/2 pr-2">
+      <View style={{ flex: 1, padding: 24 }}>
+        <View
+          style={{
+            padding: 16,
+            backgroundColor: theme.panel + "80",
+            borderRadius: 8,
+            borderWidth: 1,
+            borderColor: theme.primary + "33",
+          }}
+        >
+          <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" }}>
+            <View style={{ width: "50%", paddingRight: 8 }}>
               <StatItem label="STRENGTH" value={16} showUp />
             </View>
-            <View className="w-1/2 pl-2">
+            <View style={{ width: "50%", paddingLeft: 8 }}>
               <StatItem label="HEALTH" value={10} showUp />
             </View>
-            <View className="w-1/2 pr-2 mt-4">
+            <View style={{ width: "50%", paddingRight: 8, marginTop: 16 }}>
               <StatItem label="AGILITY" value={10} showUp />
             </View>
-            <View className="w-1/2 pl-2 mt-4">
+            <View style={{ width: "50%", paddingLeft: 8, marginTop: 16 }}>
               <StatItem label="INTELLIGENCE" value={10} showUp />
             </View>
-            <View className="w-1/2 pr-2 mt-4">
+            <View style={{ width: "50%", paddingRight: 8, marginTop: 16 }}>
               <StatItem label="SENSE" value={10} showUp />
             </View>
           </View>

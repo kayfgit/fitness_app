@@ -2,18 +2,20 @@ import { Tabs } from "expo-router";
 import { Dumbbell, ListTodo, User } from "lucide-react-native";
 import React from "react";
 import { View } from "react-native";
+import { useTheme } from "../../context/theme";
 
 export default function TabsLayout() {
+  const { theme } = useTheme();
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#0f172a", // slate-900
-          borderTopColor: "#164e63", // cyan-800
+          backgroundColor: theme.background,
+          borderTopColor: theme.primary,
         },
-        tabBarActiveTintColor: "#06b6d4", // cyan-500
-        tabBarInactiveTintColor: "#94a3b8", // slate-400
+        tabBarActiveTintColor: theme.primary,
+        tabBarInactiveTintColor: theme.text,
       }}
     >
       <Tabs.Screen

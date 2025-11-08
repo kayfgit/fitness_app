@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 import { Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuests } from "../../context/quests";
+import { useTheme } from "../../context/theme";
 
 export default function QuestHubScreen() {
   const {
@@ -15,6 +16,7 @@ export default function QuestHubScreen() {
     isQuestCompletedToday,
   } = useQuests();
   const router = useRouter();
+  const { theme } = useTheme();
 
   const sorted = useMemo(() => {
     return [...quests].sort(
@@ -39,45 +41,65 @@ export default function QuestHubScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-slate-900">
-      <View className="flex-1 p-4">
-        <Text className="text-white text-2xl font-bold text-center mb-4 tracking-widest">
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
+      <View style={{ flex: 1, padding: 16 }}>
+        <Text
+          style={{
+            color: theme["text-light"],
+            fontSize: 24,
+            fontWeight: "bold",
+            textAlign: "center",
+            marginBottom: 16,
+            letterSpacing: 0.1,
+          }}
+        >
           QUEST HUB
         </Text>
 
         <ScrollView
-          className="flex-1"
+          style={{ flex: 1 }}
           contentContainerStyle={{ paddingBottom: 24 }}
         >
           {sorted.map((q) => {
             const isActive = q.id === activeQuestId;
             const isCompleted = isQuestCompletedToday(q.id);
             return (
-              <View key={q.id} className="mb-3">
+              <View key={q.id} style={{ marginBottom: 12 }}>
                 <View
-                  className={`flex-row items-center justify-between rounded-2xl border p-4 ${
-                    isActive
-                      ? "border-cyan-400/60 bg-slate-800/70"
-                      : "border-cyan-500/20 bg-slate-800/50"
-                  } ${isCompleted ? "opacity-50" : ""}`}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    borderRadius: 16,
+                    borderWidth: 1,
+                    padding: 16,
+                    borderColor: isActive
+                      ? theme["primary-light"]
+                      : theme.primary,
+                    backgroundColor: isActive ? theme.panel : theme.background,
+                    opacity: isCompleted ? 0.5 : 1,
+                  }}
                 >
                   <Pressable
                     onPress={() => setActiveQuestId(q.id)}
-                    className="flex-1 pr-3"
+                    style={{ flex: 1, paddingRight: 12 }}
                     disabled={isCompleted}
                   >
-                    <View className="flex-row items-center gap-2">
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                       {isActive ? (
-                        <ShieldCheck size={18} color="#06b6d4" />
+                        <ShieldCheck size={18} color={theme.primary} />
                       ) : null}
                       <Text
-                        className={`text-lg ${isCompleted ? "text-gray-400" : "text-white"}`}
+                        style={{
+                          fontSize: 18,
+                          color: isCompleted ? theme.text : theme["text-light"],
+                        }}
                       >
                         {q.title}
                       </Text>
                     </View>
                   </Pressable>
-                  <View className="flex-row items-center gap-3">
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
                     <Pressable
                       accessibilityLabel="Edit quest"
                       onPress={() =>
@@ -91,7 +113,7 @@ export default function QuestHubScreen() {
                     >
                       <Pencil
                         size={22}
-                        color={isCompleted ? "#6b7280" : "#22d3ee"}
+                        color={isCompleted ? theme.text : theme["primary-light"]}
                       />
                     </Pressable>
                     <Pressable
@@ -102,7 +124,7 @@ export default function QuestHubScreen() {
                     >
                       <X
                         size={22}
-                        color={isCompleted ? "#6b7280" : "#ef4444"}
+                        color={isCompleted ? theme.text : theme.danger}
                       />
                     </Pressable>
                   </View>
@@ -115,15 +137,38 @@ export default function QuestHubScreen() {
                       params: { id: created.id },
                     } as any);
                   }}
-                  className={`mt-4 self-center flex-row items-center gap-2 rounded-full border border-cyan-500/40 px-4 py-2 bg-slate-800/60 ${isCompleted ? "opacity-50" : ""}`}
+                  style={{
+                    marginTop: 16,
+                    alignSelf: "center",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 8,
+                    borderRadius: 9999,
+                    borderWidth: 1,
+                    borderColor: theme.primary,
+                    paddingHorizontal: 16,
+                    paddingVertical: 8,
+                    backgroundColor: theme.panel,
+                    opacity: isCompleted ? 0.5 : 1,
+                  }}
                   disabled={isCompleted}
                 >
-                  <Plus size={20} color="#06b6d4" />
-                  <Text className="text-cyan-300 text-base">New Quest</Text>
+                  <Plus size={20} color={theme.primary} />
+                  <Text style={{ color: theme["primary-lighter"], fontSize: 16 }}>
+                    New Quest
+                  </Text>
                 </Pressable>
 
                 {isCompleted && (
-                  <Text className="text-center mt-20 font-bold text-white text-base">
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      marginTop: 80,
+                      fontWeight: "bold",
+                      color: theme["text-light"],
+                      fontSize: 16,
+                    }}
+                  >
                     QuestHub disabled if current quest has been completed.
                   </Text>
                 )}

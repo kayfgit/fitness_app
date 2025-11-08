@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useTheme } from "../context/theme";
 
 export type QuestGoal = {
   exercise: string;
@@ -35,8 +36,9 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
   onCompleteQuest,
   isCompleted,
 }) => {
+  const { theme } = useTheme();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [clockColor, setClockColor] = useState("#06b6d4");
+  const [clockColor, setClockColor] = useState(theme.primary);
 
   const allGoalsComplete = goals.every((goal) => goal.current >= goal.target);
 
@@ -122,22 +124,64 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
     }
   }, [allGoalsComplete]);
   return (
-    <View className="w-full max-w-md bg-slate-800/90 rounded-3xl shadow-lg border border-cyan-500/20">
-      <View className="flex-row justify-between items-center p-4 border-b border-cyan-500/20">
-        <View className="flex-row items-center gap-2">
-          <Info size={24} color="#06b6d4" />
-          <Text className="text-white text-xl font-bold">QUEST INFO</Text>
+    <View
+      style={{
+        width: "100%",
+        maxWidth: 448,
+        backgroundColor: theme.panel,
+        borderRadius: 24,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+        borderWidth: 1,
+        borderColor: theme.primary,
+      }}
+    >
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: 16,
+          borderBottomWidth: 1,
+          borderBottomColor: theme.primary,
+        }}
+      >
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+          <Info size={24} color={theme.primary} />
+          <Text style={{ color: theme["text-light"], fontSize: 20, fontWeight: "bold" }}>
+            QUEST INFO
+          </Text>
         </View>
         <TouchableOpacity onPress={onClose}>
-          <X size={24} color="#06b6d4" />
+          <X size={24} color={theme.primary} />
         </TouchableOpacity>
       </View>
 
-      <ScrollView className="p-4">
-        <Text className="text-white text-2xl text-center mb-6">{title}</Text>
+      <ScrollView style={{ padding: 16 }}>
+        <Text
+          style={{
+            color: theme["text-light"],
+            fontSize: 24,
+            textAlign: "center",
+            marginBottom: 24,
+          }}
+        >
+          {title}
+        </Text>
 
-        <View className="mb-6">
-          <Text className="text-center text-green-400 text-2xl font-bold mb-4">
+        <View style={{ marginBottom: 24 }}>
+          <Text
+            style={{
+              textAlign: "center",
+              color: "#22c55e",
+              fontSize: 24,
+              fontWeight: "bold",
+              marginBottom: 16,
+            }}
+          >
             GOALS
           </Text>
           {goals.map((goal, index) => {
@@ -150,41 +194,67 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
                   setSelectedIndex(index);
                   onGoalPress?.(goal, index);
                 }}
-                className={`mb-3 p-2 rounded-lg ${
-                  selectedIndex === index ? "bg-cyan-500/20" : ""
-                } ${
-                  isCompleted ? "opacity-50" : ""
-                }`}
+                style={{
+                  marginBottom: 12,
+                  padding: 8,
+                  borderRadius: 8,
+                  backgroundColor:
+                    selectedIndex === index ? theme.primary + "33" : "transparent",
+                  opacity: isCompleted ? 0.5 : 1,
+                }}
                 activeOpacity={0.7}
                 disabled={isCompleted}
               >
-                <View className="flex-row justify-between items-center">
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
                   <Text
-                    className={`text-lg ${
-                      selectedIndex === index ? "text-cyan-300" : "text-white"
-                    } ${selectedIndex === index ? "font-bold" : ""}`}
+                    style={{
+                      fontSize: 18,
+                      color:
+                        selectedIndex === index
+                          ? theme["primary-lighter"]
+                          : theme["text-light"],
+                      fontWeight: selectedIndex === index ? "bold" : "normal",
+                    }}
                   >
                     -{goal.exercise}
                   </Text>
-                  <View className="flex-row items-center">
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <Text
-                      className={`text-lg ${
-                        selectedIndex === index ? "text-cyan-300" : "text-white"
-                      } ${selectedIndex === index ? "font-bold" : ""}`}
+                      style={{
+                        fontSize: 18,
+                        color:
+                          selectedIndex === index
+                            ? theme["primary-lighter"]
+                            : theme["text-light"],
+                        fontWeight: selectedIndex === index ? "bold" : "normal",
+                      }}
                     >
                       [{goal.current}/{goal.target}
                       {goal.unit || ""}]
                     </Text>
                     {isComplete && (
-                      <Check size={20} color="#22c55e" className="ml-2" />
+                      <Check size={20} color="#22c55e" style={{ marginLeft: 8 }} />
                     )}
                   </View>
                 </View>
                 {selectedIndex === index && (
                   <View
-                    className="absolute inset-0 border border-cyan-400 rounded-lg"
                     style={{
-                      shadowColor: "#06b6d4",
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      borderWidth: 1,
+                      borderColor: theme["primary-light"],
+                      borderRadius: 8,
+                      shadowColor: theme.primary,
                       shadowOffset: { width: 0, height: 0 },
                       shadowOpacity: 0.5,
                       shadowRadius: 8,
@@ -197,9 +267,9 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
         </View>
 
         {!allGoalsComplete && (
-          <View className="mb-6">
-            <Text className="text-white text-lg text-center">
-              <Text className="text-red-500 font-bold text-lg mb-2">
+          <View style={{ marginBottom: 24 }}>
+            <Text style={{ color: theme["text-light"], fontSize: 18, textAlign: "center" }}>
+              <Text style={{ color: theme.danger, fontWeight: "bold", fontSize: 18 }}>
                 CAUTION!{" "}
               </Text>
               - IF THE DAILY QUEST{"\n"}REMAINS INCOMPLETE, PENALTIES{"\n"}
@@ -209,24 +279,46 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
         )}
 
         {!allGoalsComplete && (
-          <View className="items-center mt-4">
+          <View style={{ alignItems: "center", marginTop: 16 }}>
             <Clock size={40} color={clockColor} />
           </View>
         )}
 
         {allGoalsComplete && (
-          <View className="mb-6">
+          <View style={{ marginBottom: 24 }}>
             {!isCompleted && (
-            <Text className="mb-6 text-white text-lg text-center">
-              ALL GOALS HAVE BEEN MET!
-            </Text>
+              <Text
+                style={{
+                  marginBottom: 24,
+                  color: theme["text-light"],
+                  fontSize: 18,
+                  textAlign: "center",
+                }}
+              >
+                ALL GOALS HAVE BEEN MET!
+              </Text>
             )}
 
             <Pressable
               onPress={onCompleteQuest}
               disabled={isCompleted}
-              className={`rounded-2xl border border-cyan-500/30 ${isCompleted ? 'bg-gray-600/70' : 'bg-green-800/70'} px-4 py-4`}>
-              <Text className={`text-center font-bold text-lg ${isCompleted ? 'text-gray-400' : 'text-green-500'}`}>
+              style={{
+                borderRadius: 16,
+                borderWidth: 1,
+                borderColor: theme.primary + "4D",
+                backgroundColor: isCompleted ? "#6b7280" + "B3" : "#166534" + "B3",
+                paddingHorizontal: 16,
+                paddingVertical: 16,
+              }}
+            >
+              <Text
+                style={{
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  fontSize: 18,
+                  color: isCompleted ? "#9ca3af" : "#22c55e",
+                }}
+              >
                 {isCompleted ? "COMPLETED" : "COMPLETE QUEST"}
               </Text>
             </Pressable>
@@ -234,10 +326,58 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
         )}
       </ScrollView>
 
-      <View className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-cyan-500/50 rounded-tl-xl" />
-      <View className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-cyan-500/50 rounded-tr-xl" />
-      <View className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-cyan-500/50 rounded-bl-xl" />
-      <View className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-cyan-500/50 rounded-br-xl" />
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: 32,
+          height: 32,
+          borderTopWidth: 2,
+          borderLeftWidth: 2,
+          borderColor: theme.primary + "80",
+          borderTopLeftRadius: 16,
+        }}
+      />
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+          width: 32,
+          height: 32,
+          borderTopWidth: 2,
+          borderRightWidth: 2,
+          borderColor: theme.primary + "80",
+          borderTopRightRadius: 16,
+        }}
+      />
+      <View
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          width: 32,
+          height: 32,
+          borderBottomWidth: 2,
+          borderLeftWidth: 2,
+          borderColor: theme.primary + "80",
+          borderBottomLeftRadius: 16,
+        }}
+      />
+      <View
+        style={{
+          position: "absolute",
+          bottom: 0,
+          right: 0,
+          width: 32,
+          height: 32,
+          borderBottomWidth: 2,
+          borderRightWidth: 2,
+          borderColor: theme.primary + "80",
+          borderBottomRightRadius: 16,
+        }}
+      />
     </View>
   );
 };
