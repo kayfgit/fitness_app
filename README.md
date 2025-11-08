@@ -10,9 +10,13 @@ It's an app based on the Solo Leveling system, with nothing of that "Defeat the 
 
 - Make the penalties work when you fail the quest
 
-- Make it prettier and more accurate to the system of Solo Leveling.
+- Fix the stats screen
 
-- Have the purple version that you can activate in the settings (Because it's purple and really cool).
+- Add notification settings
+
+- Make it so there is a hidden achievement that allows you to get the purple theme. Write something like "You need to push beyond your limits to get a different theme"
+
+- Make it prettier and more accurate to the system of Solo Leveling.
 
 - Notifications and warnings should have the theme of the app.
 
@@ -38,6 +42,8 @@ It's an app based on the Solo Leveling system, with nothing of that "Defeat the 
 
 - Have a way to complete the quest so no penalties are applied.
 
+- Have the purple version that you can activate in the settings (Because it's purple and really cool).
+
 ## END TODOS:
 
 - Have some way of checking that the exercises are actually being done instead of being cheated.
@@ -54,6 +60,10 @@ It's an app based on the Solo Leveling system, with nothing of that "Defeat the 
 
 - After completing the app, it should start with the basic daily training from Solo Leveling as the current quest.
 
-## KNOWN BUGS:
+## KNOWN BUGS OR ISSUES:
 
 - When you go to profile and press multiple times on the stats tab, it will redirect you a bunch of times, so you would need to press on the back arrow a bunch of times to go back, a fix would probably be to add a small delay to each press.
+
+- Quest daily reset isn't working properly
+
+- The X hitbox to uncomplete the quest is so unbelievably small

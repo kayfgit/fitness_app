@@ -22,25 +22,67 @@ export type QuestGoal = {
 type QuestInfoProps = {
   title: string;
   goals: QuestGoal[];
-  onClose?: () => void;
   onGoalPress?: (goal: QuestGoal, index: number) => void;
   onCompleteQuest: () => void;
+  onUncompleteQuest?: () => void;
   isCompleted: boolean;
 };
 
 const QuestInfo: React.FC<QuestInfoProps> = ({
   title,
   goals,
-  onClose,
   onGoalPress,
   onCompleteQuest,
+  onUncompleteQuest,
   isCompleted,
 }) => {
   const { theme } = useTheme();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [clockColor, setClockColor] = useState(theme.primary);
+  const [showTimer, setShowTimer] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState("");
 
   const allGoalsComplete = goals.every((goal) => goal.current >= goal.target);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (showTimer) {
+      const updateTimer = () => {
+        const now = new Date();
+        const midnight = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate() + 1,
+          0,
+          0,
+          0
+        );
+        const diff = midnight.getTime() - now.getTime();
+
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        setTimeRemaining(
+          `${hours.toString().padStart(2, "0")}:${minutes
+            .toString()
+            .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+        );
+      };
+
+      updateTimer();
+      //@ts-ignore
+      interval = setInterval(updateTimer, 1000);
+    } else if (interval) {
+      clearInterval(interval);
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [showTimer]);
 
   useEffect(() => {
     if (!allGoalsComplete) {
@@ -151,11 +193,17 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
       >
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
           <Info size={24} color={theme.primary} />
-          <Text style={{ color: theme["text-light"], fontSize: 20, fontWeight: "bold" }}>
+          <Text
+            style={{
+              color: theme["text-light"],
+              fontSize: 20,
+              fontWeight: "bold",
+            }}
+          >
             QUEST INFO
           </Text>
         </View>
-        <TouchableOpacity onPress={onClose}>
+        <TouchableOpacity onPress={onUncompleteQuest}>
           <X size={24} color={theme.primary} />
         </TouchableOpacity>
       </View>
@@ -199,7 +247,9 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
                   padding: 8,
                   borderRadius: 8,
                   backgroundColor:
-                    selectedIndex === index ? theme.primary + "33" : "transparent",
+                    selectedIndex === index
+                      ? theme.primary + "33"
+                      : "transparent",
                   opacity: isCompleted ? 0.5 : 1,
                 }}
                 activeOpacity={0.7}
@@ -239,7 +289,11 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
                       {goal.unit || ""}]
                     </Text>
                     {isComplete && (
-                      <Check size={20} color="#22c55e" style={{ marginLeft: 8 }} />
+                      <Check
+                        size={20}
+                        color="#22c55e"
+                        style={{ marginLeft: 8 }}
+                      />
                     )}
                   </View>
                 </View>
@@ -268,8 +322,20 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
 
         {!allGoalsComplete && (
           <View style={{ marginBottom: 24 }}>
-            <Text style={{ color: theme["text-light"], fontSize: 18, textAlign: "center" }}>
-              <Text style={{ color: theme.danger, fontWeight: "bold", fontSize: 18 }}>
+            <Text
+              style={{
+                color: theme["text-light"],
+                fontSize: 18,
+                textAlign: "center",
+              }}
+            >
+              <Text
+                style={{
+                  color: theme.danger,
+                  fontWeight: "bold",
+                  fontSize: 18,
+                }}
+              >
                 CAUTION!{" "}
               </Text>
               - IF THE DAILY QUEST{"\n"}REMAINS INCOMPLETE, PENALTIES{"\n"}
@@ -280,7 +346,20 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
 
         {!allGoalsComplete && (
           <View style={{ alignItems: "center", marginTop: 16 }}>
-            <Clock size={40} color={clockColor} />
+            {showTimer && (
+              <Text
+                style={{
+                  color: theme["text-light"],
+                  fontSize: 20,
+                  marginBottom: 8,
+                }}
+              >
+                {timeRemaining}
+              </Text>
+            )}
+            <TouchableOpacity onPress={() => setShowTimer((prev) => !prev)}>
+              <Clock size={40} color={clockColor} />
+            </TouchableOpacity>
           </View>
         )}
 
@@ -306,7 +385,9 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
                 borderRadius: 16,
                 borderWidth: 1,
                 borderColor: theme.primary + "4D",
-                backgroundColor: isCompleted ? "#6b7280" + "B3" : "#166534" + "B3",
+                backgroundColor: isCompleted
+                  ? "#6b7280" + "B3"
+                  : "#166534" + "B3",
                 paddingHorizontal: 16,
                 paddingVertical: 16,
               }}

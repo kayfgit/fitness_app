@@ -6,6 +6,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { AppState } from "react-native";
 import { loadObject, saveObject } from "../lib/storage";
 
 export type QuestGoal = {
@@ -37,14 +38,11 @@ type QuestsState = {
     newProgress: number
   ) => void;
   isQuestCompletedToday: (questId: string) => boolean;
-  completeQuest: (questId: string) => void;
-  devModeBypass: boolean;
-  toggleDevMode: () => void;
+  uncompleteQuest: (questId: string) => void;
 };
 
 const STORAGE_KEY = "quests_state_v1";
 const QUEST_COMPLETION_KEY = "quest_completion_v1";
-const DEV_MODE_BYPASS_KEY = "dev_mode_bypass_v1";
 
 const QuestsContext = createContext<QuestsState | undefined>(undefined);
 
@@ -54,13 +52,72 @@ function generateId(prefix: string = "id"): string {
   return `${prefix}_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
 }
 
+function getTodayLocalDateString() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = (now.getMonth() + 1).toString().padStart(2, "0");
+  const day = now.getDate().toString().padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 export const QuestsProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
   const [quests, setQuests] = useState<Quest[]>([]);
   const [activeQuestId, setActiveQuestId] = useState<string | null>(null);
-  const [questCompletion, setQuestCompletion] = useState<Record<string, string>>({});
-  const [devModeBypass, setDevModeBypass] = useState(false);
+  const [questCompletion, setQuestCompletion] = useState<
+    Record<string, string>
+  >({});
+
+  const resetCompletedQuests = useCallback(async () => {
+    const today = getTodayLocalDateString();
+    const completion =
+      (await loadObject<Record<string, string>>(QUEST_COMPLETION_KEY)) || {};
+
+    const resetQuestsList = quests.map((quest) => {
+      const completedDate = completion[quest.id];
+      if (completedDate && completedDate < today) {
+        return {
+          ...quest,
+          goals: quest.goals.map((g) => ({ ...g, current: 0 })),
+        };
+      }
+      return quest;
+    });
+
+    setQuests(resetQuestsList);
+
+    const newCompletion = { ...completion };
+    let needsUpdate = false;
+    for (const questId in newCompletion) {
+      if (newCompletion[questId] < today) {
+        delete newCompletion[questId];
+        needsUpdate = true;
+      }
+    }
+
+    if (needsUpdate) {
+      setQuestCompletion(newCompletion);
+      await saveObject(QUEST_COMPLETION_KEY, newCompletion);
+    }
+  }, [quests]);
+
+  useEffect(() => {
+    const handleAppStateChange = (nextAppState: any) => {
+      if (nextAppState === "active") {
+        resetCompletedQuests();
+      }
+    };
+
+    const subscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange
+    );
+
+    return () => {
+      subscription.remove();
+    };
+  }, [resetCompletedQuests]);
 
   useEffect(() => {
     (async () => {
@@ -69,18 +126,13 @@ export const QuestsProvider: React.FC<React.PropsWithChildren> = ({
         const completion = await loadObject<Record<string, string>>(
           QUEST_COMPLETION_KEY
         );
-        const devMode = await loadObject<boolean>(DEV_MODE_BYPASS_KEY);
-
-        if (devMode) {
-          setDevModeBypass(devMode);
-        }
 
         if (completion) {
           setQuestCompletion(completion);
         }
 
         if (persisted) {
-          const today = new Date().toISOString().slice(0, 10);
+          const today = getTodayLocalDateString();
           const resetQuests = persisted.quests.map((quest) => {
             const completedDate = completion?.[quest.id];
             if (completedDate && completedDate < today) {
@@ -245,16 +297,25 @@ export const QuestsProvider: React.FC<React.PropsWithChildren> = ({
 
   const isQuestCompletedToday = useCallback(
     (questId: string): boolean => {
-      if (devModeBypass) return false;
-      const today = new Date().toISOString().slice(0, 10);
-      return questCompletion[questId] === today;
+      const today = getTodayLocalDateString();
+      if (questCompletion[questId] !== today) {
+        return false;
+      }
+
+      const quest = quests.find((q) => q.id === questId);
+      if (!quest) {
+        return false;
+      }
+      const allGoalsMet = quest.goals.every((g) => g.current >= g.target);
+
+      return allGoalsMet;
     },
-    [questCompletion, devModeBypass]
+    [questCompletion, quests]
   );
 
   const completeQuest = useCallback(
     async (questId: string) => {
-      const today = new Date().toISOString().slice(0, 10);
+      const today = getTodayLocalDateString();
       const newCompletion = { ...questCompletion, [questId]: today };
       setQuestCompletion(newCompletion);
       await saveObject(QUEST_COMPLETION_KEY, newCompletion);
@@ -262,11 +323,15 @@ export const QuestsProvider: React.FC<React.PropsWithChildren> = ({
     [questCompletion]
   );
 
-  const toggleDevMode = useCallback(async () => {
-    const nextValue = !devModeBypass;
-    setDevModeBypass(nextValue);
-    await saveObject(DEV_MODE_BYPASS_KEY, nextValue);
-  }, [devModeBypass]);
+  const uncompleteQuest = useCallback(
+    async (questId: string) => {
+      const newCompletion = { ...questCompletion };
+      delete newCompletion[questId];
+      setQuestCompletion(newCompletion);
+      await saveObject(QUEST_COMPLETION_KEY, newCompletion);
+    },
+    [questCompletion]
+  );
 
   const activeQuest = useMemo(
     () => quests.find((q) => q.id === activeQuestId) || null,
@@ -286,8 +351,7 @@ export const QuestsProvider: React.FC<React.PropsWithChildren> = ({
       updateGoalProgress,
       isQuestCompletedToday,
       completeQuest,
-      devModeBypass,
-      toggleDevMode,
+      uncompleteQuest,
     }),
     [
       quests,
@@ -301,8 +365,7 @@ export const QuestsProvider: React.FC<React.PropsWithChildren> = ({
       updateGoalProgress,
       isQuestCompletedToday,
       completeQuest,
-      devModeBypass,
-      toggleDevMode,
+      uncompleteQuest,
     ]
   );
 

@@ -3,12 +3,10 @@ import { ChevronRight, TriangleAlert, Bell, User2, Palette, ChartLine } from "lu
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useQuests } from "../../../context/quests";
 import { useTheme } from "../../../context/theme";
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { devModeBypass, toggleDevMode } = useQuests();
   const { theme } = useTheme();
 
   const Row = ({
@@ -102,24 +100,6 @@ export default function ProfileScreen() {
           }
           icon={<Palette size={20} color={theme["primary-light"]} />}
         />
-
-        <View style={{ marginTop: "auto", paddingTop: 16 }}>
-          <Pressable
-            onPress={toggleDevMode}
-            style={{
-              borderRadius: 16,
-              borderWidth: 1,
-              borderColor: "#f59e0b" + "4D",
-              backgroundColor: theme.panel + "B3",
-              paddingHorizontal: 16,
-              paddingVertical: 16,
-            }}
-          >
-            <Text style={{ textAlign: "center", color: "#fbbf24" }}>
-              Dev: Bypass Daily Reset ({devModeBypass ? "ON" : "OFF"})
-            </Text>
-          </Pressable>
-        </View>
       </View>
     </SafeAreaView>
   );

@@ -7,7 +7,13 @@ import { useQuests } from "../../context/quests";
 import { useTheme } from "../../context/theme";
 
 export default function CurrentScreen() {
-  const { activeQuest, updateGoalProgress, isQuestCompletedToday, completeQuest } = useQuests();
+  const {
+    activeQuest,
+    updateGoalProgress,
+    isQuestCompletedToday,
+    completeQuest,
+    uncompleteQuest,
+  } = useQuests();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState<{
     exercise: string;
@@ -29,11 +35,20 @@ export default function CurrentScreen() {
     }
   };
 
-  const isCompleted = activeQuest ? isQuestCompletedToday(activeQuest.id) : false;
+  const isCompleted = activeQuest
+    ? isQuestCompletedToday(activeQuest.id)
+    : false;
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: 16 }}>
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 16,
+        }}
+      >
         {activeQuest ? (
           <QuestInfo
             title={activeQuest.title}
@@ -41,6 +56,7 @@ export default function CurrentScreen() {
             onGoalPress={handleGoalPress}
             isCompleted={isCompleted}
             onCompleteQuest={() => completeQuest(activeQuest.id)}
+            onUncompleteQuest={() => uncompleteQuest(activeQuest.id)}
           />
         ) : (
           <Text style={{ color: theme.text }}>No active quest selected.</Text>
