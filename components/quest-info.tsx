@@ -320,7 +320,7 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
           })}
         </View>
 
-        {!allGoalsComplete && (
+        {(!allGoalsComplete || allGoalsComplete) && (
           <View style={{ marginBottom: 24 }}>
             <Text
               style={{
@@ -365,18 +365,6 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
 
         {allGoalsComplete && (
           <View style={{ marginBottom: 24 }}>
-            {!isCompleted && (
-              <Text
-                style={{
-                  marginBottom: 24,
-                  color: theme["text-light"],
-                  fontSize: 18,
-                  textAlign: "center",
-                }}
-              >
-                ALL GOALS HAVE BEEN MET!
-              </Text>
-            )}
 
             <Pressable
               onPress={onCompleteQuest}
@@ -403,6 +391,7 @@ const QuestInfo: React.FC<QuestInfoProps> = ({
                 {isCompleted ? "COMPLETED" : "COMPLETE QUEST"}
               </Text>
             </Pressable>
+
           </View>
         )}
       </ScrollView>
